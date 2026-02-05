@@ -3,7 +3,7 @@
 
 ## Overview
 
-This page documents the customised GPT described in [Paper Title].
+This page documents the customised GPT described in "A concept for AI supported knowledge extraction in design for additive manufacturing".
 
 ## Components
 
