@@ -1,11 +1,13 @@
-# Customised GPT for DfAM
+# Quick links
+
+**Quick links:** [Instructions](instructions.md) · [FLOW.json](FLOW_dfam_tutor_v1.json) · [Screenshots](screenshots/)
+
+# Structure of the GPT
 
 ![Customised GPT Overview](GPT_3.png)
 
-# Customised GPT for DfAM
 
 
-**Quick links:** [Instructions](instructions.md) · [FLOW.json](FLOW_dfam_tutor_v1.json) · [Screenshots](screenshots/)
 
 ## Overview
 This page documents the customised GPT described in the paper “A concept for AI supported knowledge extraction in design for additive manufacturing” (Design Conference 2026).
