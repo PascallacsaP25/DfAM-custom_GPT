@@ -1,0 +1,279 @@
+// JavaScript source code
+{
+  "flow_name": "DfAM Tutor v1",
+  "flow_version": "1.0",
+  "start_node": "intro",
+  "nodes": {
+    "intro": {
+      "id": "intro",
+      "prompt": "Willkommen! Was ist dein Ziel? (1) Grundlagen verstehen (2) Bauteil leichter machen (3) Teile konsolidieren (4) Stützstrukturen minimieren",
+      "type": "single_choice",
+      "options": [
+        {"id": "basics", "label": "Grundlagen"},
+        {"id": "lightweight", "label": "Leichtbau"},
+        {"id": "consolidation", "label": "Konsolidierung"},
+        {"id": "supports", "label": "Stützstrukturen"}
+      ],
+      "edges": [
+        {"if_answer_in": ["basics"], "to": "principles"},
+        {"if_answer_in": ["lightweight"], "to": "lightweight_ask_geometry"},
+        {"if_answer_in": ["consolidation"], "to": "consolidation_intro"},
+        {"if_answer_in": ["supports"], "to": "supports_intro"}
+      ],
+      "fallback_to": "clarify_1"
+    },
+
+    "principles": {
+      "id": "principles",
+      "prompt": "DfAM heißt u. a.: Material nur dort, wo es Last trägt; Funktionsintegration; komplexe Geometrie ist 'billig', Fertigungszeit/Orientierung zählt. Möchtest du ein kurzes Beispiel? (1) Ja (2) Nein)",
+      "type": "single_choice",
+      "options": [
+        {"id": "yes", "label": "Ja"},
+        {"id": "no", "label": "Nein"}
+      ],
+      "edges": [
+        {"if_answer_in": ["yes"], "to": "principles_example"},
+        {"if_answer_in": ["no"], "to": "usecase_probe"}
+      ],
+      "fallback_to": "principles"
+    },
+
+    "principles_example": {
+      "id": "principles_example",
+      "prompt": "Beispiel: Eine konventionell gefräste Halterung wird für AM als Topologie-optimierter Grundkörper mit optionalen Gitterbereichen ausgeführt. So sinkt Masse bei gleicher Steifigkeit. Weiter mit deinem Anwendungsfall? (1) Ja (2) Zurück zum Start)",
+      "type": "single_choice",
+      "options": [
+        {"id": "go_usecase", "label": "Ja, Anwendungsfall nennen"},
+        {"id": "restart", "label": "Zurück zum Start"}
+      ],
+      "edges": [
+        {"if_answer_in": ["go_usecase"], "to": "usecase_probe"},
+        {"if_answer_in": ["restart"], "to": "intro"}
+      ],
+      "fallback_to": "usecase_probe"
+    },
+
+    "usecase_probe": {
+      "id": "usecase_probe",
+      "prompt": "Beschreibe kurz deinen Anwendungsfall oder Bauteiltyp (z. B. Halter/Bracket, Gehäuse, Kanal/Duct, Kühlung/Heat sink).",
+      "type": "free_text",
+      "edges": [
+        {"if_contains": ["halter", "bracket"], "to": "material_gate"},
+        {"if_contains": ["gehäuse", "housing", "cover"], "to": "material_gate"},
+        {"if_contains": ["kanal", "duct", "leitung"], "to": "material_gate"},
+        {"if_contains": ["kühl", "wärme", "heat", "cool"], "to": "material_gate"},
+        {"else": true, "to": "material_gate"}
+      ],
+      "fallback_to": "material_gate"
+    },
+
+    "material_gate": {
+      "id": "material_gate",
+      "prompt": "Welche Werkstoffklasse planst du hauptsächlich? (1) Polymere (2) Metalle (3) Unsicher",
+      "type": "single_choice",
+      "options": [
+        {"id": "polymers", "label": "Polymere"},
+        {"id": "metals", "label": "Metalle"},
+        {"id": "unsure", "label": "Unsicher"}
+      ],
+      "edges": [
+        {"if_answer_in": ["polymers"], "to": "material_polymer_intro"},
+        {"if_answer_in": ["metals"], "to": "material_metal_intro"},
+        {"if_answer_in": ["unsure"], "to": "material_unsure_tip"}
+      ],
+      "fallback_to": "material_gate"
+    },
+
+    "material_polymer_intro": {
+      "id": "material_polymer_intro",
+      "prompt": "Hinweis: Bei Polymeren beachten: Anisotropie (Schichten), Stützstrategie, Mindestwanddicken. Wie möchtest du fortfahren? (1) Leichtbau-Optionen wählen (2) Stützstrukturen betrachten (3) Zurück zum Start)",
+      "type": "single_choice",
+      "options": [
+        {"id": "go_lightweight", "label": "Leichtbau-Optionen"},
+        {"id": "go_supports", "label": "Stützstrukturen"},
+        {"id": "restart", "label": "Zurück zum Start"}
+      ],
+      "edges": [
+        {"if_answer_in": ["go_lightweight"], "to": "lightweight_ask_geometry"},
+        {"if_answer_in": ["go_supports"], "to": "supports_intro"},
+        {"if_answer_in": ["restart"], "to": "intro"}
+      ],
+      "fallback_to": "lightweight_ask_geometry"
+    },
+
+    "material_metal_intro": {
+      "id": "material_metal_intro",
+      "prompt": "Hinweis: Bei Metallen beachten: Bauteilorientierung vs. Stützbedarf, Eigenspannungen/Verzug, Mindeststeg-/Bohrungsgrößen. Wie möchtest du fortfahren? (1) Leichtbau-Optionen (2) Teilekonsolidierung (3) Zurück zum Start)",
+      "type": "single_choice",
+      "options": [
+        {"id": "go_lightweight", "label": "Leichtbau-Optionen"},
+        {"id": "go_consolidation", "label": "Teilekonsolidierung"},
+        {"id": "restart", "label": "Zurück zum Start"}
+      ],
+      "edges": [
+        {"if_answer_in": ["go_lightweight"], "to": "lightweight_ask_geometry"},
+        {"if_answer_in": ["go_consolidation"], "to": "consolidation_intro"},
+        {"if_answer_in": ["restart"], "to": "intro"}
+      ],
+      "fallback_to": "lightweight_ask_geometry"
+    },
+
+    "material_unsure_tip": {
+      "id": "material_unsure_tip",
+      "prompt": "Kein Problem. Wenn Kosten/Prototyping im Fokus stehen ? häufig Polymere; für Funktionsbauteile bei hohen Lasten/Temperaturen ? Metalle. Womit möchtest du beginnen? (1) Leichtbau-Optionen (2) Stützstrukturen (3) Zurück zum Start)",
+      "type": "single_choice",
+      "options": [
+        {"id": "go_lightweight", "label": "Leichtbau-Optionen"},
+        {"id": "go_supports", "label": "Stützstrukturen"},
+        {"id": "restart", "label": "Zurück zum Start"}
+      ],
+      "edges": [
+        {"if_answer_in": ["go_lightweight"], "to": "lightweight_ask_geometry"},
+        {"if_answer_in": ["go_supports"], "to": "supports_intro"},
+        {"if_answer_in": ["restart"], "to": "intro"}
+      ],
+      "fallback_to": "lightweight_ask_geometry"
+    },
+
+    "lightweight_ask_geometry": {
+      "id": "lightweight_ask_geometry",
+      "prompt": "Welche Leichtbau-Strategie möchtest du betrachten? (1) Topologieoptimierung (2) Gitterstrukturen (3) Dünnwandigkeit)",
+      "type": "single_choice",
+      "options": [
+        {"id": "topopt", "label": "Topologieoptimierung"},
+        {"id": "lattice", "label": "Gitterstrukturen"},
+        {"id": "thinwalls", "label": "Dünnwandigkeit"}
+      ],
+      "edges": [
+        {"if_answer_in": ["topopt"], "to": "lightweight_topopt_tip"},
+        {"if_answer_in": ["lattice"], "to": "lightweight_lattice_tip"},
+        {"if_answer_in": ["thinwalls"], "to": "lightweight_thinwalls_tip"}
+      ],
+      "fallback_to": "lightweight_ask_geometry"
+    },
+
+    "lightweight_topopt_tip": {
+      "id": "lightweight_topopt_tip",
+      "prompt": "Tipps: Lastfälle sauber definieren; Fertigungsrestriktionen (min. Stegbreite, Entformung irrelevant, aber Stützfähigkeit/Orientierung wichtig) berücksichtigen; Ergebnis glätten/parametrisieren. Nächster Schritt? (1) Werkstoff wählen (2) Zurück zum Start)",
+      "type": "single_choice",
+      "options": [
+        {"id": "go_material", "label": "Werkstoff wählen"},
+        {"id": "restart", "label": "Zurück zum Start"}
+      ],
+      "edges": [
+        {"if_answer_in": ["go_material"], "to": "material_gate"},
+        {"if_answer_in": ["restart"], "to": "intro"}
+      ],
+      "fallback_to": "material_gate"
+    },
+
+    "lightweight_lattice_tip": {
+      "id": "lightweight_lattice_tip",
+      "prompt": "Tipps: Zelltyp vs. Steifigkeit/Dämpfung; Zelldichte/Strut-Durchmesser vs. Druckzeit; Übergänge zu Volumenkörpern fillet/Blend. Nächster Schritt? (1) Werkstoff wählen (2) Zurück zum Start)",
+      "type": "single_choice",
+      "options": [
+        {"id": "go_material", "label": "Werkstoff wählen"},
+        {"id": "restart", "label": "Zurück zum Start"}
+      ],
+      "edges": [
+        {"if_answer_in": ["go_material"], "to": "material_gate"},
+        {"if_answer_in": ["restart"], "to": "intro"}
+      ],
+      "fallback_to": "material_gate"
+    },
+
+    "lightweight_thinwalls_tip": {
+      "id": "lightweight_thinwalls_tip",
+      "prompt": "Tipps: Mindestwanddicken pro Verfahren einhalten; Rippen statt massive Bereiche; Orientierungswahl für Stabilität. Nächster Schritt? (1) Werkstoff wählen (2) Zurück zum Start)",
+      "type": "single_choice",
+      "options": [
+        {"id": "go_material", "label": "Werkstoff wählen"},
+        {"id": "restart", "label": "Zurück zum Start"}
+      ],
+      "edges": [
+        {"if_answer_in": ["go_material"], "to": "material_gate"},
+        {"if_answer_in": ["restart"], "to": "intro"}
+      ],
+      "fallback_to": "material_gate"
+    },
+
+    "supports_intro": {
+      "id": "supports_intro",
+      "prompt": "Stützstrukturen beeinflussen Oberflächen, Zeit und Material. Ziele: Überhänge reduzieren, Orientierungen optimieren, Kontaktflächen minimieren. Hilfe gewünscht? (1) Ja, Tipps (2) Zurück zum Start)",
+      "type": "single_choice",
+      "options": [
+        {"id": "yes_tips", "label": "Ja, Tipps"},
+        {"id": "restart", "label": "Zurück zum Start"}
+      ],
+      "edges": [
+        {"if_answer_in": ["yes_tips"], "to": "supports_tips"},
+        {"if_answer_in": ["restart"], "to": "intro"}
+      ],
+      "fallback_to": "supports_tips"
+    },
+
+    "supports_tips": {
+      "id": "supports_tips",
+      "prompt": "Tipps: Kritische Überhangwinkel je Verfahren; Löcher vertikal statt horizontal; Abstützen an wenig sichtbaren Flächen; Brim/Raft je nach Prozess. Weiter? (1) Werkstoff wählen (2) Zurück zum Start)",
+      "type": "single_choice",
+      "options": [
+        {"id": "go_material", "label": "Werkstoff wählen"},
+        {"id": "restart", "label": "Zurück zum Start"}
+      ],
+      "edges": [
+        {"if_answer_in": ["go_material"], "to": "material_gate"},
+        {"if_answer_in": ["restart"], "to": "intro"}
+      ],
+      "fallback_to": "material_gate"
+    },
+
+    "consolidation_intro": {
+      "id": "consolidation_intro",
+      "prompt": "Teilekonsolidierung: Verbinde Baugruppen, reduziere Montageaufwand, beachte Wartung/Service. Möchtest du Heuristiken sehen? (1) Ja (2) Zurück zum Start)",
+      "type": "single_choice",
+      "options": [
+        {"id": "yes_rules", "label": "Ja"},
+        {"id": "restart", "label": "Zurück zum Start"}
+      ],
+      "edges": [
+        {"if_answer_in": ["yes_rules"], "to": "consolidation_rules"},
+        {"if_answer_in": ["restart"], "to": "intro"}
+      ],
+      "fallback_to": "consolidation_rules"
+    },
+
+    "consolidation_rules": {
+      "id": "consolidation_rules",
+      "prompt": "Heuristiken: Verbinde Teile ohne Relativbewegung; integriere Kanäle/Features; prüfe Bauraum/Entnahme/Orientierung. Weiter? (1) Werkstoff wählen (2) Zurück zum Start)",
+      "type": "single_choice",
+      "options": [
+        {"id": "go_material", "label": "Werkstoff wählen"},
+        {"id": "restart", "label": "Zurück zum Start"}
+      ],
+      "edges": [
+        {"if_answer_in": ["go_material"], "to": "material_gate"},
+        {"if_answer_in": ["restart"], "to": "intro"}
+      ],
+      "fallback_to": "material_gate"
+    },
+
+    "clarify_1": {
+      "id": "clarify_1",
+      "prompt": "Ich konnte deine Auswahl nicht zuordnen. Bitte wähle: (1) Grundlagen (2) Leichtbau (3) Konsolidierung (4) Stützstrukturen",
+      "type": "single_choice",
+      "options": [
+        {"id": "basics", "label": "Grundlagen"},
+        {"id": "lightweight", "label": "Leichtbau"},
+        {"id": "consolidation", "label": "Konsolidierung"},
+        {"id": "supports", "label": "Stützstrukturen"}
+      ],
+      "edges": [
+        {"if_answer_in": ["basics"], "to": "principles"},
+        {"if_answer_in": ["lightweight"], "to": "lightweight_ask_geometry"},
+        {"if_answer_in": ["consolidation"], "to": "consolidation_intro"},
+        {"if_answer_in": ["supports"], "to": "supports_intro"}
+      ],
+      "fallback_to": "intro"
+    }
+  }
+}
