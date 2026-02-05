@@ -17,3 +17,4 @@ User Input → FLOW configuration → System Instructions → GPT → Output
 ## Artifact Description
 This repository provides supplementary material documenting the system configuration (FLOW.json), the full system instructions, and illustrative screenshots. It documents the setup and design decisions rather than providing a deployable implementation.
 
+## Disclaimer
