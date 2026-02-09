@@ -19,4 +19,4 @@ This repository contains supplementary material for documenting the system confi
 
 ## Disclaimer
 The results shown purely document the functionality of the stored decision tree and how to deal with deviations from the prescribed process flow and does not represent an operational implementation.
-This GPT was primarily created in German. This can be seen in the FLOW.json file. However, English translations have also been included in the response options. And as shown in the sample conversation (screenshots), it also works in English when requested. The results of the quality of interpretation of external knowledge content (in the form of scientific papers) are not presented here.
+This GPT was primarily created in German. This can be seen in the FLOW.json file. However, English translations have also been included in the response options. And as shown in the sample conversation (screenshots), it also works in English when requested. The results of the quality of the interpretation of the subject content (scientific papers) are not presented here.
